@@ -1,6 +1,6 @@
 # Ray Revello — Personal Website
 
-A single-file résumé website for **Ray Revello** — director, filmmaker, and film curator based in Austin, TX.
+A single-file résumé website for **Ray Revello** — director, filmmaker, and film curator based in San Francisco, CA (also Austin, TX).
 
 ## Contents
 - `index.html` — the entire site. Self-contained: all CSS, JavaScript, and the hero portrait (base64-embedded) are inline, with **no external dependencies**. Open it directly in any browser.
