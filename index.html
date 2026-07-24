@@ -295,6 +295,21 @@
     box-shadow: 0 14px 34px var(--shadow);
   }
   .film-card:hover::before { opacity: 1; }
+  .film-thumb {
+    margin: -24px -24px 18px;
+    height: 180px;
+    overflow: hidden;
+    border-bottom: 1px solid var(--border);
+    background: #000;
+  }
+  .film-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform .4s ease;
+  }
+  .film-card:hover .film-thumb img { transform: scale(1.05); }
   .film-year {
     font-family: var(--font-display);
     font-size: 1.6rem;
@@ -452,17 +467,17 @@
 <script>
   // ---------- Filmography data ----------
   const films = [
-    { year: "2026", title: "Blonde Ambitions", role: "Mr. Revolver", tag: "In Production", prod: true },
-    { year: "2025", title: "Love's Long Shadow", role: "Harvey Weebs", tag: "Feature" },
-    { year: "2024", title: "Pickle Pressure", role: "Harvey Weebs", tag: "Feature" },
-    { year: "2024", title: "Ninja Killface", role: "Mr. Ray Revolver", tag: "Feature" },
-    { year: "2022", title: "The Sadder but Wiser Boy", role: "Jay", tag: "Feature" },
-    { year: "2021", title: "A Lust for Time", role: "Paul Kirchner", tag: "Feature" },
-    { year: "2021", title: "Night Dicks: Miami", role: "Pizza Brother Sal / Masked Marauder", tag: "Feature" },
+    { year: "2026", title: "Blonde Ambitions", role: "Mr. Revolver", tag: "In Production", prod: true, img: "img/blonde_ambitions.jpg", pos: "50% 35%" },
+    { year: "2025", title: "Love's Long Shadow", role: "Harvey Weebs", tag: "Feature", img: "img/loves_long_shadow.jpg", pos: "45% 35%" },
+    { year: "2024", title: "Pickle Pressure", role: "Harvey Weebs", tag: "Feature", img: "img/pickle_pressure.jpg", pos: "55% 40%" },
+    { year: "2024", title: "Ninja Killface", role: "Mr. Ray Revolver", tag: "Feature", img: "img/ninja_killface.jpg", pos: "35% 35%" },
+    { year: "2022", title: "The Sadder but Wiser Boy", role: "Jay", tag: "Feature", img: "img/sadder_but_wiser_boy.jpg", pos: "78% 40%" },
+    { year: "2021", title: "A Lust for Time", role: "Paul Kirchner", tag: "Feature", img: "img/a_lust_for_time.jpg", pos: "58% 35%" },
+    { year: "2021", title: "Night Dicks: Miami", role: "Pizza Brother Sal / Masked Marauder", tag: "Feature", img: "img/night_dicks_miami.jpg", pos: "45% 40%" },
     { year: "2017", title: "Shadows in the Snow", role: "Cast", tag: "Thriller Short" },
     { year: "2015", title: "The Dollars & Donuts Christmas Special", role: "Cast", tag: "Holiday Short" },
-    { year: "2014", title: "The Alibi", role: "Cast", tag: "Crime Short" },
-    { year: "2012", title: "Oldtimers", role: "Julio", tag: "Film" },
+    { year: "2014", title: "The Alibi", role: "Cast", tag: "Crime Short", img: "img/the_alibi.jpg", pos: "60% 35%" },
+    { year: "2012", title: "Oldtimers", role: "Julio", tag: "Film", img: "img/oldtimers.jpg", pos: "50% 30%" },
     { year: "2012", title: "Dead Right II", role: "Producer", tag: "Producer" },
     { year: "2011", title: "Dead Right", role: "Producer", tag: "Producer" },
     { year: "2009", title: "Dollars to Donuts", role: "Cast", tag: "Comedy Short" }
@@ -473,6 +488,7 @@
     const card = document.createElement("article");
     card.className = "film-card reveal";
     card.innerHTML =
+      (f.img ? '<div class="film-thumb"><img loading="lazy" src="' + f.img + '" alt="Ray Revello in ' + f.title + '" style="object-position:' + (f.pos || '50% 35%') + '"></div>' : '') +
       '<div class="film-year">' + f.year + '</div>' +
       '<div class="film-title">' + f.title + '</div>' +
       '<div class="film-role"><strong>' + f.role + '</strong></div>' +
