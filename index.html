@@ -315,6 +315,44 @@
     color: var(--text-dim);
     border: 1px solid var(--border);
   }
+  .film-card.expandable { cursor: pointer; }
+  .film-desc {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height .45s ease, opacity .35s ease, margin-top .45s ease;
+    margin-top: 0;
+  }
+  .film-card.open .film-desc {
+    max-height: 320px;
+    opacity: 1;
+    margin-top: 16px;
+  }
+  .film-desc p {
+    color: var(--text-dim);
+    font-size: .95rem;
+    line-height: 1.6;
+    padding-top: 14px;
+    border-top: 1px solid var(--border);
+  }
+  .film-more {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    margin-top: 14px;
+    padding: 0;
+    background: none;
+    border: none;
+    color: var(--accent);
+    font: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+  .film-more .caret { transition: transform .35s ease; font-size: 14px; }
+  .film-card.open .film-more .caret { transform: rotate(180deg); }
   .film-tag.prod {
     background: var(--accent);
     color: var(--accent-ink);
@@ -450,32 +488,59 @@
 <script>
   // ---------- Filmography data ----------
   const films = [
-    { year: "2026", title: "Blonde Ambitions", role: "Mr. Revolver", tag: "In Production", prod: true, img: "img/blonde_ambitions.jpg", pos: "50% 35%" },
-    { year: "2025", title: "Love's Long Shadow", role: "Harvey Weebs", tag: "Feature", img: "img/loves_long_shadow.jpg", pos: "45% 35%" },
-    { year: "2024", title: "Pickle Pressure", role: "Harvey Weebs", tag: "Feature", img: "img/pickle_pressure.jpg", pos: "55% 40%" },
-    { year: "2024", title: "Ninja Killface", role: "Mr. Ray Revolver", tag: "Feature", img: "img/ninja_killface.jpg", pos: "35% 35%" },
-    { year: "2022", title: "The Sadder but Wiser Boy", role: "Jay", tag: "Feature", img: "img/sadder_but_wiser_boy.jpg", pos: "78% 40%" },
-    { year: "2021", title: "A Lust for Time", role: "Paul Kirchner", tag: "Feature", img: "img/a_lust_for_time.jpg", pos: "58% 35%" },
-    { year: "2021", title: "Night Dicks: Miami", role: "Pizza Brother Sal / Masked Marauder", tag: "Feature", img: "img/night_dicks_miami.jpg", pos: "45% 40%" },
-    { year: "2017", title: "Shadows in the Snow", role: "Cast", tag: "Thriller Short" },
-    { year: "2015", title: "The Dollars & Donuts Christmas Special", role: "Cast", tag: "Holiday Short" },
-    { year: "2014", title: "The Alibi", role: "Cast", tag: "Crime Short", img: "img/the_alibi.jpg", pos: "60% 35%" },
-    { year: "2012", title: "Oldtimers", role: "Julio", tag: "Film", img: "img/oldtimers.jpg", pos: "50% 30%" },
-    { year: "2012", title: "Dead Right II", role: "Producer", tag: "Producer" },
-    { year: "2011", title: "Dead Right", role: "Producer", tag: "Producer" },
-    { year: "2009", title: "Dollars to Donuts", role: "Cast", tag: "Comedy Short" }
+    { year: "2026", title: "Blonde Ambitions", role: "Mr. Revolver", tag: "In Production", prod: true, img: "img/blonde_ambitions.jpg", pos: "50% 35%",
+      desc: "A hardboiled neo-noir. A simple business deal becomes a slow-burning game of power, seduction and control when Mr. Revolver walks into a strip club expecting respect — and gets something else entirely. Some deals aren't meant to be made." },
+    { year: "2025", title: "Love's Long Shadow", role: "Harvey Weebs", tag: "Feature", img: "img/loves_long_shadow.jpg", pos: "45% 35%",
+      desc: "A neo-noir thriller set against a rainy Golden Gate tragedy and the unforgiving Texas sun. Frank Barnett fights to save his engagement from a lethal obsession — can you ever truly know the person you're about to marry? Ray plays Harvey Weebs, Frank's beleaguered accountant." },
+    { year: "2024", title: "Pickle Pressure", role: "Harvey Weebs", tag: "Feature", img: "img/pickle_pressure.jpg", pos: "55% 40%",
+      desc: "Shot in a single morning, this fast-and-loose companion piece drops into the unraveling home life of Harvey Weebs — detective Frank Barnett's perpetually frazzled accountant — barely holding it together between a perverted caller, career-ending paperwork and his own vices." },
+    { year: "2024", title: "Ninja Killface", role: "Mr. Ray Revolver", tag: "Feature", img: "img/ninja_killface.jpg", pos: "35% 35%",
+      desc: "Assassin James C. Franken — 'Ninja Killface' — is working off a debt to ruthless crime boss Mr. Revolver. Tasked with rescuing Revolver's daughter, a mission of loyalty twists into a web of betrayal and hard truths." },
+    { year: "2022", title: "The Sadder but Wiser Boy", role: "Jay", tag: "Feature", img: "img/sadder_but_wiser_boy.jpg", pos: "78% 40%",
+      desc: "A dark comedy about friendship and growing up. Lando and Dallas have spent 20 years locked in a co-dependent friendship of pranks and insults; now in their thirties, Dallas tries to help Lando 'grow up' — with unexpected results." },
+    { year: "2021", title: "A Lust for Time", role: "Paul Kirchner", tag: "Feature", img: "img/a_lust_for_time.jpg", pos: "58% 35%",
+      desc: "A Dollars & Donuts sci-fi short built around a time machine and the A.I. that runs it, with Ray in a leading turn as Paul Kirchner." },
+    { year: "2021", title: "Night Dicks: Miami", role: "Pizza Brother Sal / Masked Marauder", tag: "Feature", img: "img/night_dicks_miami.jpg", pos: "45% 40%",
+      desc: "A multiverse-hopping action-adventure. When Rochester Black and Slade McKlosky come up against the villainous Dr. Bitch, they're sent careening across realities to witness her destruction first-hand." },
+    { year: "2017", title: "Shadows in the Snow", role: "Cast", tag: "Thriller Short",
+      desc: "A crime thriller shot in South Lake Tahoe. After double-crossing and murdering their partner Joey, Ernie and Stokes try to flee the snow-filled mountains in their stolen Cadillac." },
+    { year: "2015", title: "The Dollars & Donuts Christmas Special", role: "Cast", tag: "Holiday Short",
+      desc: "The crew's tongue-in-cheek holiday special — a Dollars & Donuts Christmas send-up." },
+    { year: "2014", title: "The Alibi", role: "Cast", tag: "Crime Short", img: "img/the_alibi.jpg", pos: "60% 35%",
+      desc: "A 21-minute crime short from Dollars & Donuts, directed by Daryl Della." },
+    { year: "2012", title: "Oldtimers", role: "Julio", tag: "Film", img: "img/oldtimers.jpg", pos: "50% 30%",
+      desc: "A western-tinged revenge-action comedy. When selling his prescription meds goes sideways, an 85-year-old man fed up with the world enlists his friends to teach a couple of punks a lesson. Ray delivers a powerhouse turn as thug leader Julio." },
+    { year: "2012", title: "Dead Right II", role: "Producer", tag: "Producer",
+      desc: "A horror short. Handcuffed to a gurney and left in a desolate room, there's no easy escape for Deke — he's going to be dying a very long time. Ray produced." },
+    { year: "2011", title: "Dead Right", role: "Producer", tag: "Producer",
+      desc: "A crime short — brutal, ruthless, deadly; he's flawed that way. Ray produced." },
+    { year: "2009", title: "Dollars to Donuts", role: "Cast", tag: "Comedy Short",
+      desc: "An early Dollars & Donuts comedy short: Buddy and Mitch cook up a plan to get the ladies." }
   ];
 
   const grid = document.getElementById("filmGrid");
   films.forEach(f => {
     const card = document.createElement("article");
-    card.className = "film-card reveal";
+    card.className = "film-card reveal" + (f.desc ? " expandable" : "");
     card.innerHTML =
       (f.img ? '<div class="film-thumb"><img loading="lazy" src="' + f.img + '" alt="Ray Revello in ' + f.title + '" style="object-position:' + (f.pos || '50% 35%') + '"></div>' : '') +
       '<div class="film-year">' + f.year + '</div>' +
       '<div class="film-title">' + f.title + '</div>' +
       '<div class="film-role"><strong>' + f.role + '</strong></div>' +
-      '<span class="film-tag' + (f.prod ? ' prod' : '') + '">' + f.tag + '</span>';
+      '<span class="film-tag' + (f.prod ? ' prod' : '') + '">' + f.tag + '</span>' +
+      (f.desc ? '<div class="film-desc"><p>' + f.desc + '</p></div>' +
+                '<button class="film-more" type="button"><span class="lbl">Synopsis</span><span class="caret">&#9662;</span></button>' : '');
+    if (f.desc) {
+      const toggle = () => {
+        const open = card.classList.toggle("open");
+        card.querySelector(".film-more").setAttribute("aria-expanded", open);
+        card.querySelector(".film-more .lbl").textContent = open ? "Hide" : "Synopsis";
+      };
+      const btn = card.querySelector(".film-more");
+      btn.setAttribute("aria-expanded", "false");
+      btn.addEventListener("click", (e) => { e.stopPropagation(); toggle(); });
+      card.addEventListener("click", toggle);
+    }
     grid.appendChild(card);
   });
 
