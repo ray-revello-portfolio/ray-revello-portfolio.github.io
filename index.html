@@ -324,7 +324,7 @@
     margin-top: 0;
   }
   .film-card.open .film-desc {
-    max-height: 320px;
+    max-height: 900px;
     opacity: 1;
     margin-top: 16px;
   }
@@ -334,6 +334,77 @@
     line-height: 1.6;
     padding-top: 14px;
     border-top: 1px solid var(--border);
+  }
+  .film-video {
+    margin-top: 16px;
+    border-radius: 10px;
+    overflow: hidden;
+    aspect-ratio: 16 / 9;
+    background: #000;
+  }
+  .film-video iframe { width: 100%; height: 100%; border: 0; display: block; }
+  .yt-facade {
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    border: 0;
+    cursor: pointer;
+    position: relative;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: filter .25s ease;
+  }
+  .yt-facade::after {
+    content: "";
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(0,0,0,0.05), rgba(0,0,0,0.35));
+    transition: background .25s ease;
+  }
+  .yt-facade:hover { filter: brightness(1.05); }
+  .yt-facade:hover::after { background: rgba(0,0,0,0.15); }
+  .yt-play {
+    position: relative;
+    z-index: 1;
+    width: 62px; height: 62px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+    transition: transform .25s ease, background .25s ease;
+  }
+  .yt-play::before {
+    content: "";
+    position: absolute;
+    top: 50%; left: 54%;
+    transform: translate(-50%, -50%);
+    border-style: solid;
+    border-width: 12px 0 12px 20px;
+    border-color: transparent transparent transparent var(--accent-ink);
+  }
+  .yt-facade:hover .yt-play { transform: scale(1.1); background: var(--accent-2); }
+  .yt-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 12px;
+    color: var(--text-dim);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+    transition: color .2s ease;
+  }
+  .yt-link:hover { color: var(--accent); }
+  .yt-kind {
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: var(--chip-bg);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
   }
   .film-more {
     display: inline-flex;
@@ -518,6 +589,23 @@
       desc: "An early Dollars & Donuts comedy short: Buddy and Mitch cook up a plan to get the ladies." }
   ];
 
+  // Title -> YouTube video (full films where available, else trailer)
+  const videos = {
+    "Blonde Ambitions":                       { id: "J6coDHqws_A", kind: "Official Trailer" },
+    "Love's Long Shadow":                      { id: "VX0UYc2LgNQ", kind: "Full Film" },
+    "Pickle Pressure":                         { id: "owMBj5Pntcg", kind: "Full Film" },
+    "Ninja Killface":                          { id: "tVVnwG__u2M", kind: "Full Film" },
+    "The Sadder but Wiser Boy":                { id: "lQ7VzAHZqRU", kind: "Full Film" },
+    "A Lust for Time":                         { id: "N2WoEVJhauY", kind: "Full Film" },
+    "Night Dicks: Miami":                      { id: "AzI5HwnHLcc", kind: "Full Film" },
+    "Shadows in the Snow":                     { id: "bFrBm5Ylo_s", kind: "Full Film" },
+    "The Dollars & Donuts Christmas Special":  { id: "Y59KMSbGsvE", kind: "Full Film" },
+    "The Alibi":                               { id: "Lm9PHTb0E88", kind: "Full Film" },
+    "Oldtimers":                               { id: "FieusECnCQQ", kind: "Full Film" },
+    "Dead Right II":                           { id: "HDm1RL8FfQI", kind: "Full Film" },
+    "Dead Right":                              { id: "n4VF665TPF4", kind: "Full Film" }
+  };
+
   const grid = document.getElementById("filmGrid");
   films.forEach(f => {
     const card = document.createElement("article");
@@ -528,7 +616,7 @@
       '<div class="film-title">' + f.title + '</div>' +
       '<div class="film-role"><strong>' + f.role + '</strong></div>' +
       '<span class="film-tag' + (f.prod ? ' prod' : '') + '">' + f.tag + '</span>' +
-      (f.desc ? '<div class="film-desc"><p>' + f.desc + '</p></div>' +
+      (f.desc ? '<div class="film-desc"><p>' + f.desc + '</p>' + videoBlock(f) + '</div>' +
                 '<button class="film-more" type="button"><span class="lbl">Synopsis</span><span class="caret">&#9662;</span></button>' : '');
     if (f.desc) {
       const toggle = () => {
@@ -540,9 +628,42 @@
       btn.setAttribute("aria-expanded", "false");
       btn.addEventListener("click", (e) => { e.stopPropagation(); toggle(); });
       card.addEventListener("click", toggle);
+
+      // Lazy YouTube facade: load the iframe only on click
+      const vid = card.querySelector(".yt-facade");
+      if (vid) {
+        card.querySelectorAll(".film-video, .yt-link").forEach(el =>
+          el.addEventListener("click", (e) => e.stopPropagation()));
+        vid.addEventListener("click", (e) => {
+          e.stopPropagation();
+          const id = vid.dataset.id;
+          const frame = document.createElement("iframe");
+          frame.src = "https://www.youtube-nocookie.com/embed/" + id + "?autoplay=1&rel=0&modestbranding=1";
+          frame.title = f.title + " — video";
+          frame.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
+          frame.allowFullscreen = true;
+          frame.loading = "lazy";
+          vid.replaceWith(frame);
+        });
+      }
     }
     grid.appendChild(card);
   });
+
+  function videoBlock(f) {
+    const v = videos[f.title];
+    if (!v) return '';
+    const watch = "https://www.youtube.com/watch?v=" + v.id;
+    const thumb = "https://i.ytimg.com/vi/" + v.id + "/hqdefault.jpg";
+    return '<div class="film-video">' +
+             '<button class="yt-facade" type="button" data-id="' + v.id + '" ' +
+               'aria-label="Play ' + f.title + '" style="background-image:url(\'' + thumb + '\')">' +
+               '<span class="yt-play"></span>' +
+             '</button>' +
+           '</div>' +
+           '<a class="yt-link" href="' + watch + '" target="_blank" rel="noopener">' +
+             'Watch on YouTube &#8599;<span class="yt-kind">' + v.kind + '</span></a>';
+  }
 
   // ---------- Theme switcher ----------
   const btns = document.querySelectorAll(".theme-switcher button");
