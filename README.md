@@ -10,7 +10,7 @@ A single-file résumé website for **Ray Revello** — director, filmmaker, and 
 - About section with an "At a Glance" facts panel (craft + genre chips)
 - Selected filmography as a responsive card grid (2009–2026)
 - Contact links: IMDb, Dollars & Donuts, Instagram
-- Three live-switchable themes (Noir / Modern / Bold) via the top-right switcher
+- Two live-switchable themes (Noir / Modern) via the top-right switcher
 - Fully responsive with smooth scroll-reveal animations
 
 ## Links
